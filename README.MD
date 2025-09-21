@@ -27,7 +27,7 @@ This project is a secure file transfer system built with Java and Spring Boot. I
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/your-username/secure-file-transfer.git](https://github.com/your-username/secure-file-transfer.git)
+    git clone https://github.com/VICK-HAD/secure-file-transfer.git
     cd secure-file-transfer
     ```
 
