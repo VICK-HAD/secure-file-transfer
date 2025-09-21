@@ -1,0 +1,1 @@
+// Defines the structure of JSON responses to the frontend.
