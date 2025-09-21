@@ -8,5 +8,6 @@ public class SecureFileTransferApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SecureFileTransferApplication.class, args);
+        System.out.println("Heyy !");
 	}
 }
