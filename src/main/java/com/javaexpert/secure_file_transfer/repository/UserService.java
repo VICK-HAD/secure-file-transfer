@@ -1,0 +1,1 @@
+// Interface to find users in a database.

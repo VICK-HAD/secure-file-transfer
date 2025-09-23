@@ -1,0 +1,1 @@
+// Represents a user in your system.
