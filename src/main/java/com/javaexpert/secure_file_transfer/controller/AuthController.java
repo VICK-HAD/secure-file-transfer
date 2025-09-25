@@ -34,4 +34,5 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Invalid username or password.");
         }
     }
+
 }
