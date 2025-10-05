@@ -19,13 +19,14 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Add the public key endpoint to this list of public URLs
+                        // Add the storage check endpoint to this list of public URLs
                         .requestMatchers(
                                 "/",
                                 "/index.html",
                                 "/script.js",
                                 "/style.css",
-                                "/api/security/public-key" // <-- ADD THIS
+                                "/api/security/public-key", // The key endpoint
+                                "/api/storage/check"      // <-- The storage check endpoint
                         ).permitAll()
 
                         // All other requests still require authentication
