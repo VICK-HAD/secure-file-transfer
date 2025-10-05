@@ -1,7 +1,7 @@
 package com.javaexpert.secure_file_transfer.service;
 
 import com.javaexpert.secure_file_transfer.model.User;
-import com.javaexpert.secure_file_transfer.repository.UserRepository;
+import com.javaexpert.secure_file_transfer.repository.userRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.security.MessageDigest;
@@ -12,7 +12,7 @@ import java.util.Optional;
 public class UserService {
 ;
     @Autowired
-    private UserRepository userRepository;
+    private userRepository userRepository;
 
     private String hashPassword(String password) {
         try {
