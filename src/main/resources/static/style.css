@@ -129,6 +129,13 @@ button:hover {
     background-color: rgba(0, 123, 255, 0.1);
 }
 
+.file-size-limit {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-top: -10px; /* Adjust spacing */
+    margin-bottom: 20px;
+}
+
 .file-label {
     color: var(--primary-color);
     cursor: pointer;
