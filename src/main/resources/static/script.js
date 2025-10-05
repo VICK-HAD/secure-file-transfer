@@ -205,17 +205,25 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('key', new Blob([encryptedAesKeyBuffer]), 'aes.key');
             formData.append('hash', hashHex);
 
-            const uploadResponse = await fetch('/api/files/upload', {
-                method: 'POST',
-                body: formData
-            });
+           // Inside the performSecureUpload function, replace the final fetch block with this:
 
-            const result = await uploadResponse.json();
-            if (uploadResponse.ok) {
-                statusMessage.textContent = `Success: ${result.message}`;
-            } else {
-                statusMessage.textContent = `Error: ${result.message}`;
-            }
+           const uploadResponse = await fetch('/api/files/upload', {
+               method: 'POST',
+               body: formData
+           });
+
+           // Check if the server responded with a redirect to the login page
+           if (uploadResponse.redirected && uploadResponse.url.includes('/login')) {
+               statusMessage.textContent = 'Error: Your session has expired. Please log out and log back in.';
+               return; // Stop the function
+           }
+
+           const result = await uploadResponse.json();
+           if (uploadResponse.ok) {
+               statusMessage.textContent = `Success: ${result.message}`;
+           } else {
+               statusMessage.textContent = `Error: ${result.message}`;
+           }
 
         } catch (error) {
             console.error('An error occurred:', error);
