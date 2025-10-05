@@ -1,4 +1,3 @@
-// package com.secure.filetransfer.controller;
 package com.javaexpert.secure_file_transfer.controller;
 
 import com.javaexpert.secure_file_transfer.service.UserService;
@@ -15,19 +14,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestParam String username, @RequestParam String password) {
+        // We will now create this registerUser method in the UserService
         if (userService.registerUser(username, password)) {
             return ResponseEntity.ok("Registration successful!");
         } else {
             return ResponseEntity.badRequest().body("Username already exists.");
-        }
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestParam String username, @RequestParam String password) {
-        if (userService.loginUser(username, password)) {
-            return ResponseEntity.ok("Login successful!");
-        } else {
-            return ResponseEntity.badRequest().body("Invalid username or password.");
         }
     }
 }
