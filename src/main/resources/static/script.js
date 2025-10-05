@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Authentication ---
+    // Replace the loginForm event listener with this new version
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const username = document.getElementById('login-username').value;
@@ -62,12 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/login', {
                 method: 'POST',
                 body: new URLSearchParams(formData)
-                // No credentials needed here, the browser handles it for form posts
             });
 
+            // Check if the response status is 200 OK
             if (response.ok) {
                 statusMessage.textContent = 'Login successful!';
-                showSection(appSection);
+                showSection(appSection); // Switch to the main app view
             } else {
                 statusMessage.textContent = 'Invalid username or password.';
             }
