@@ -13,6 +13,9 @@ import java.io.FileInputStream;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.util.Base64;
+import javax.crypto.spec.OAEPParameterSpec;
+import javax.crypto.spec.PSource;
+import java.security.spec.MGF1ParameterSpec;
 
 @Service
 public class CryptoService {
@@ -71,12 +74,20 @@ public class CryptoService {
      * @return The decrypted AES key as a SecretKey object.
      */
     public SecretKey decryptAesKey(byte[] encryptedAesKey) throws Exception {
-        // Get an instance of the RSA cipher.
-        Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
-        // Initialize the cipher for decryption mode with our private key.
-        cipher.init(Cipher.DECRYPT_MODE, privateKey);
-        // Decrypt the data.
+        // Use the more specific RSA/ECB/OAEPPadding algorithm
+        Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPPadding");
+
+        // Explicitly define the same OAEP parameters that the Web Crypto API uses
+        OAEPParameterSpec oaepParams = new OAEPParameterSpec(
+                "SHA-256", "MGF1", MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT
+        );
+
+        // Initialize the cipher for decryption mode with our private key and the explicit parameters
+        cipher.init(Cipher.DECRYPT_MODE, privateKey, oaepParams);
+
+        // Decrypt the data
         byte[] decryptedKeyBytes = cipher.doFinal(encryptedAesKey);
+
         // The decrypted bytes represent the AES key. We wrap them in a SecretKeySpec.
         return new SecretKeySpec(decryptedKeyBytes, "AES");
     }
