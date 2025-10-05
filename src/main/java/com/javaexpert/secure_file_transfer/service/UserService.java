@@ -1,6 +1,6 @@
 package com.javaexpert.secure_file_transfer.service;
 
-import com.javaexpert.secure_file_transfer.repository.UserRepository;
+import com.javaexpert.secure_file_transfer.repository.userRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
