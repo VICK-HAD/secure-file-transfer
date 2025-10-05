@@ -1,4 +1,4 @@
-package com.javaexpert.secure_file_transfer.config; // Or your config/security package
+package com.javaexpert.secure_file_transfer.security; // Or your config/security package
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
