@@ -17,19 +17,18 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(Customizer.withDefaults())
+                // Add this line to disable CSRF protection
                 .csrf(csrf -> csrf.disable())
+
                 .authorizeHttpRequests(auth -> auth
-                        // Add the storage check endpoint to this list of public URLs
                         .requestMatchers(
                                 "/",
                                 "/index.html",
                                 "/script.js",
                                 "/style.css",
-                                "/api/security/public-key", // The key endpoint
-                                "/api/storage/check"      // <-- The storage check endpoint
+                                "/api/security/public-key",
+                                "/api/storage/check"
                         ).permitAll()
-
-                        // All other requests still require authentication
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.permitAll());
