@@ -16,16 +16,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Integrate CORS configuration directly into the security chain
                 .cors(Customizer.withDefaults())
-
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Allow anyone to access the frontend, public key, AND storage check endpoints
-                        .requestMatchers("/", "/index.html", "/script.js", "/style.css").permitAll()
-                        .requestMatchers("/api/security/public-key", "/api/storage/check").permitAll()
+                        // Add the public key endpoint to this list of public URLs
+                        .requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/script.js",
+                                "/style.css",
+                                "/api/security/public-key" // <-- ADD THIS
+                        ).permitAll()
 
-                        // All other requests require the user to be authenticated
+                        // All other requests still require authentication
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.permitAll());
