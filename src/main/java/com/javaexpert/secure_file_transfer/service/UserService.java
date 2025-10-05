@@ -1,53 +1,33 @@
 package com.javaexpert.secure_file_transfer.service;
 
-import com.javaexpert.secure_file_transfer.model.User;
-import com.javaexpert.secure_file_transfer.repository.userRepository;
+import com.javaexpert.secure_file_transfer.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
 
 @Service
-public class UserService {
-;
+public class UserService implements UserDetailsService {
+
+    private final userRepository userRepository;
+
     @Autowired
-    private userRepository userRepository;
-
-    private String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(password.getBytes());
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : hash) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) hexString.append('0');
-                hexString.append(hex);
-            }
-            return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public UserService(userRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public boolean registerUser(String username, String password) {
-        if (userRepository.existsByUsername(username)) {
-            return false;
-        }
-        User user = new User();
-        user.setUsername(username);
-        user.setPasswordHash(hashPassword(password));
-        userRepository.save(user);
-        return true;
-    }
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // Find the user in the database.
+        com.javaexpert.secure_file_transfer.model.User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
-    public boolean loginUser(String username, String password) {
-        Optional<User> userOptional = userRepository.findByUsername(username);
-        if (userOptional.isPresent()) {
-            String hashedPassword = hashPassword(password);
-            return hashedPassword.equals(userOptional.get().getPasswordHash());
-        }
-        return false;
+        // Convert your User object into a Spring Security UserDetails object.
+        return User.withUsername(user.getUsername())
+                .password(user.getPassword())
+                .roles("USER") // You can define roles here
+                .build();
     }
 }
