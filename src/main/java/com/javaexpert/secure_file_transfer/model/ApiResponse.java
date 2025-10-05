@@ -1,5 +1,3 @@
-// Defines the structure of JSON responses to the frontend.
-
 package com.javaexpert.secure_file_transfer.model;
 
 import java.time.LocalDateTime;
@@ -18,7 +16,7 @@ public class ApiResponse {
         this.timestamp = LocalDateTime.now();
     }
 
-    // Getters are required for the Spring Boot's JSON serializer (Jackson) to work.
+    // Getters are required for Spring Boot's JSON serializer (Jackson) to work.
     public String getMessage() {
         return message;
     }
