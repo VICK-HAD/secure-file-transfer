@@ -1,10 +1,9 @@
 package com.javaexpert.secure_file_transfer.service;
 
 import com.javaexpert.secure_file_transfer.model.User;
-import com.javaexpert.secure_file_transfer.repository.userRepository;
+import com.javaexpert.secure_file_transfer.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
@@ -13,7 +12,7 @@ import java.util.Optional;
 public class UserService {
 
     @Autowired
-    private userRepository userRepository;
+    private UserRepository userRepository;
 
     private String hashPassword(String password) {
         try {
@@ -36,7 +35,6 @@ public class UserService {
         if (userRepository.existsByUsername(username)) {
             return false;
         }
-
         User user = new User();
         user.setUsername(username);
         user.setPasswordHash(hashPassword(password));
@@ -45,8 +43,11 @@ public class UserService {
     }
 
     public boolean loginUser(String username, String password) {
-        String hashedPassword = hashPassword(password);
-        Optional<User> userOptional = userRepository.findByUsernameAndPasswordHash(username, hashedPassword);
-        return userOptional.isPresent();
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isPresent()) {
+            String hashedPassword = hashPassword(password);
+            return hashedPassword.equals(userOptional.get().getPasswordHash());
+        }
+        return false;
     }
 }
