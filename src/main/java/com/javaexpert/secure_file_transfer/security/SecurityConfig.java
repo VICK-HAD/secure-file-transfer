@@ -1,5 +1,6 @@
 package com.javaexpert.secure_file_transfer.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -17,30 +18,31 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable()) // Disable CSRF
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/",
-                                "/index.html",
-                                "/script.js",
-                                "/style.css",
+                                "/", "/index.html", "/script.js", "/style.css",
                                 "/api/security/public-key",
                                 "/api/storage/check",
-                                "/api/auth/register" // Also permit registration
+                                "/api/auth/register"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                // Explicitly configure form login
+                // This is the new, API-style login configuration
                 .formLogin(form -> form
-                        .loginProcessingUrl("/login") // The URL to submit the login form to
-                        .defaultSuccessUrl("/", true) // Redirect to the main page on success
+                        .loginProcessingUrl("/login")
+                        .successHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK); // Send 200 OK
+                        })
+                        .failureHandler((request, response, exception) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Send 401 Unauthorized
+                        })
                         .permitAll()
                 )
-                // Explicitly configure logout
                 .logout(logout -> logout
-                        .logoutUrl("/logout") // The URL to trigger logout
-                        .deleteCookies("JSESSIONID") // Invalidate the session cookie
-                        .logoutSuccessUrl("/") // Redirect to the main page after logout
+                        .logoutUrl("/logout")
+                        .deleteCookies("JSESSIONID")
+                        .logoutSuccessUrl("/")
                 );
 
         return http.build();
