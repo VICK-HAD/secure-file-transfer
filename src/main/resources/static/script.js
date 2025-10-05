@@ -1,10 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Page Sections
+    // ... (all your existing const declarations are fine) ...
     const heroSection = document.getElementById('hero-section');
     const authSection = document.getElementById('auth-section');
     const appSection = document.getElementById('app-section');
 
-    // UI Elements
     const tryNowBtn = document.getElementById('try-now-btn');
     const logoutBtn = document.getElementById('logout-btn');
     const showRegisterLink = document.getElementById('show-register');
@@ -14,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
 
-    // App Elements
     const dropArea = document.getElementById('drop-area');
     const fileInput = document.getElementById('fileInput');
     const fileInfo = document.getElementById('file-info');
@@ -33,8 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     tryNowBtn.addEventListener('click', () => showSection(authSection));
-    logoutBtn.addEventListener('click', () => {
-        // Here you would also call a /logout endpoint if using session invalidation
+
+    logoutBtn.addEventListener('click', async () => {
+        await fetch('/logout', { method: 'POST', credentials: 'include' }); // <-- CHANGE ADDED
         showSection(heroSection);
     });
 
@@ -55,8 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const username = document.getElementById('login-username').value;
         const password = document.getElementById('login-password').value;
-
-        // Spring Security's formLogin expects a POST to /login
         const formData = new FormData();
         formData.append('username', username);
         formData.append('password', password);
@@ -65,10 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/login', {
                 method: 'POST',
                 body: new URLSearchParams(formData)
+                // No credentials needed here, the browser handles it for form posts
             });
 
-            if (response.ok && response.redirected) {
-                // A successful login via formLogin usually results in a redirect
+            if (response.ok) {
                 statusMessage.textContent = 'Login successful!';
                 showSection(appSection);
             } else {
@@ -83,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const username = document.getElementById('register-username').value;
         const password = document.getElementById('register-password').value;
-
         const formData = new FormData();
         formData.append('username', username);
         formData.append('password', password);
@@ -91,11 +87,12 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
-                body: new URLSearchParams(formData)
+                body: new URLSearchParams(formData),
+                credentials: 'include' // <-- CHANGE ADDED
             });
 
             const result = await response.text();
-            alert(result); // Show success/failure message
+            alert(result);
             if (response.ok) {
                 showLoginLink.click();
             }
@@ -104,34 +101,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Drag and Drop ---
+    // --- Drag and Drop Logic (no changes needed here) ---
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         dropArea.addEventListener(eventName, preventDefaults, false);
     });
-
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
+    function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
     ['dragenter', 'dragover'].forEach(eventName => {
         dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false);
     });
-
     ['dragleave', 'drop'].forEach(eventName => {
         dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
     });
-
     dropArea.addEventListener('drop', (e) => {
         const dt = e.dataTransfer;
         const files = dt.files;
         handleFile(files[0]);
     });
-
     fileInput.addEventListener('change', (e) => {
         handleFile(e.target.files[0]);
     });
-
     function handleFile(file) {
         if (file) {
             selectedFile = file;
@@ -146,9 +134,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         statusMessage.textContent = 'Checking server storage...';
 
-        // **NEW: STORAGE CHECK**
         try {
-            const checkResponse = await fetch(`/api/storage/check?fileSize=${selectedFile.size}`);
+            const checkResponse = await fetch(`/api/storage/check?fileSize=${selectedFile.size}`, { credentials: 'include' }); // <-- CHANGE ADDED
             const checkData = await checkResponse.json();
 
             if (!checkData.hasEnoughSpace) {
@@ -160,41 +147,26 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // If storage check passes, proceed with crypto workflow.
         await performSecureUpload(selectedFile);
     });
 
     async function performSecureUpload(file) {
-        // This is the full crypto workflow from the previous step.
         statusMessage.textContent = 'Starting secure upload...';
 
         try {
-            // Step 1: Read file content.
-            statusMessage.textContent = 'Reading file...';
-            const fileBuffer = await file.arrayBuffer();
-
-            // Step 2: Calculate SHA-256 hash of the original file.
-            statusMessage.textContent = 'Generating file hash...';
-            const hashBuffer = await window.crypto.subtle.digest('SHA-256', fileBuffer);
-            const hashHex = bufferToHex(hashBuffer);
-
-            // Step 3: Generate a random AES-GCM key.
-            statusMessage.textContent = 'Generating encryption key...';
-            const aesKey = await window.crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt']);
-
-            // Step 4: Encrypt the file using the AES key.
-            statusMessage.textContent = 'Encrypting file...';
-            const iv = window.crypto.getRandomValues(new Uint8Array(12));
-            const encryptedFileBuffer = await window.crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, aesKey, fileBuffer);
-
             // Step 5: Fetch the server's public RSA key.
             statusMessage.textContent = 'Fetching server public key...';
-            const response = await fetch('/api/security/public-key');
-            const keyData = await response.json();
-            const rsaPublicKey = await importRsaPublicKey(keyData.publicKey);
+            const response = await fetch('/api/security/public-key', { credentials: 'include' }); // <-- CHANGE ADDED
 
-            // Step 6: Encrypt the AES key with the server's public RSA key.
-            statusMessage.textContent = 'Encrypting session key...';
+            // ... (rest of your crypto logic is fine) ...
+            const keyData = await response.json();
+            const fileBuffer = await file.arrayBuffer();
+            const hashBuffer = await window.crypto.subtle.digest('SHA-256', fileBuffer);
+            const hashHex = bufferToHex(hashBuffer);
+            const aesKey = await window.crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt']);
+            const iv = window.crypto.getRandomValues(new Uint8Array(12));
+            const encryptedFileBuffer = await window.crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, aesKey, fileBuffer);
+            const rsaPublicKey = await importRsaPublicKey(keyData.publicKey);
             const exportedAesKey = await window.crypto.subtle.exportKey('raw', aesKey);
             const encryptedAesKeyBuffer = await window.crypto.subtle.encrypt({ name: 'RSA-OAEP' }, rsaPublicKey, exportedAesKey);
 
@@ -205,25 +177,23 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('key', new Blob([encryptedAesKeyBuffer]), 'aes.key');
             formData.append('hash', hashHex);
 
-           // Inside the performSecureUpload function, replace the final fetch block with this:
+            const uploadResponse = await fetch('/api/files/upload', {
+                method: 'POST',
+                body: formData,
+                credentials: 'include' // <-- CHANGE ADDED
+            });
 
-           const uploadResponse = await fetch('/api/files/upload', {
-               method: 'POST',
-               body: formData
-           });
+            if (uploadResponse.redirected && uploadResponse.url.includes('/login')) {
+                statusMessage.textContent = 'Error: Your session has expired. Please log out and log back in.';
+                return;
+            }
 
-           // Check if the server responded with a redirect to the login page
-           if (uploadResponse.redirected && uploadResponse.url.includes('/login')) {
-               statusMessage.textContent = 'Error: Your session has expired. Please log out and log back in.';
-               return; // Stop the function
-           }
-
-           const result = await uploadResponse.json();
-           if (uploadResponse.ok) {
-               statusMessage.textContent = `Success: ${result.message}`;
-           } else {
-               statusMessage.textContent = `Error: ${result.message}`;
-           }
+            const result = await uploadResponse.json();
+            if (uploadResponse.ok) {
+                statusMessage.textContent = `Success: ${result.message}`;
+            } else {
+                statusMessage.textContent = `Error: ${result.message}`;
+            }
 
         } catch (error) {
             console.error('An error occurred:', error);
@@ -231,17 +201,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Helper Functions ---
-    function bufferToHex(buffer) {
-        return [...new Uint8Array(buffer)].map(b => b.toString(16).padStart(2, '0')).join('');
-    }
+    // --- Helper Functions (no changes needed here) ---
+    function bufferToHex(buffer) { return [...new Uint8Array(buffer)].map(b => b.toString(16).padStart(2, '0')).join(''); }
     function base64ToArrayBuffer(base64) {
         const binaryString = window.atob(base64);
         const len = binaryString.length;
         const bytes = new Uint8Array(len);
-        for (let i = 0; i < len; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-        }
+        for (let i = 0; i < len; i++) { bytes[i] = binaryString.charCodeAt(i); }
         return bytes.buffer;
     }
     async function importRsaPublicKey(base64Key) {
