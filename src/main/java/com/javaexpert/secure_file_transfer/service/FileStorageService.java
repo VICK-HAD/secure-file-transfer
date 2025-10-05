@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.FileStore;
 
 @Service
 public class FileStorageService {
@@ -24,6 +25,19 @@ public class FileStorageService {
         } catch (IOException e) {
             // If the directory can't be created, the application can't function.
             throw new RuntimeException("Could not initialize storage directory!", e);
+        }
+    }
+
+    public boolean hasEnoughSpace(long fileSize) {
+        try {
+            FileStore store = Files.getFileStore(this.rootLocation);
+            long usableSpace = store.getUsableSpace();
+            // Return true if usable space is greater than the file size plus a small buffer (e.g., 10MB)
+            return usableSpace > (fileSize + 50 * 1024 * 1024);
+        } catch (IOException e) {
+            // If we can't determine the space, assume we can't save and log the error.
+            e.printStackTrace();
+            return false;
         }
     }
 
