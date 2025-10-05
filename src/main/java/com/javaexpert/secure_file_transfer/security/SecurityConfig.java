@@ -17,9 +17,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(Customizer.withDefaults())
-                // Add this line to disable CSRF protection
-                .csrf(csrf -> csrf.disable())
-
+                .csrf(csrf -> csrf.disable()) // Disable CSRF
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
@@ -27,11 +25,23 @@ public class SecurityConfig {
                                 "/script.js",
                                 "/style.css",
                                 "/api/security/public-key",
-                                "/api/storage/check"
+                                "/api/storage/check",
+                                "/api/auth/register" // Also permit registration
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form.permitAll());
+                // Explicitly configure form login
+                .formLogin(form -> form
+                        .loginProcessingUrl("/login") // The URL to submit the login form to
+                        .defaultSuccessUrl("/", true) // Redirect to the main page on success
+                        .permitAll()
+                )
+                // Explicitly configure logout
+                .logout(logout -> logout
+                        .logoutUrl("/logout") // The URL to trigger logout
+                        .deleteCookies("JSESSIONID") // Invalidate the session cookie
+                        .logoutSuccessUrl("/") // Redirect to the main page after logout
+                );
 
         return http.build();
     }
