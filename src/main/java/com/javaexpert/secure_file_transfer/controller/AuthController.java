@@ -14,7 +14,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestParam String username, @RequestParam String password) {
-        // We will now create this registerUser method in the UserService
         if (userService.registerUser(username, password)) {
             return ResponseEntity.ok("Registration successful!");
         } else {
