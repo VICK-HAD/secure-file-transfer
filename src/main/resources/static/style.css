@@ -80,7 +80,6 @@ button:hover {
     display: none;
 }
 
-/* Auth Section */
 .auth-container form {
     display: flex;
     flex-direction: column;

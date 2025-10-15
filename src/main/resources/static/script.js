@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ... (all your existing const declarations are fine) ...
     const heroSection = document.getElementById('hero-section');
     const authSection = document.getElementById('auth-section');
     const appSection = document.getElementById('app-section');
@@ -22,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let selectedFile = null;
 
-    // --- UI Navigation ---
     const showSection = (section) => {
         heroSection.classList.remove('active');
         authSection.classList.remove('active');
@@ -49,8 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loginFormContainer.classList.remove('hidden');
     });
 
-    // --- Authentication ---
-    // Replace the loginForm event listener with this new version
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const username = document.getElementById('login-username').value;
@@ -65,10 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: new URLSearchParams(formData)
             });
 
-            // Check if the response status is 200 OK
             if (response.ok) {
                 statusMessage.textContent = 'Login successful!';
-                showSection(appSection); // Switch to the main app view
+                showSection(appSection);
             } else {
                 statusMessage.textContent = 'Invalid username or password.';
             }
@@ -89,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
                 body: new URLSearchParams(formData),
-                credentials: 'include' // <-- CHANGE ADDED
+                credentials: 'include'
             });
 
             const result = await response.text();
@@ -102,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Drag and Drop Logic (no changes needed here) ---
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         dropArea.addEventListener(eventName, preventDefaults, false);
     });
@@ -129,14 +123,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Upload and Crypto ---
     uploadBtn.addEventListener('click', async () => {
         if (!selectedFile) return;
 
         statusMessage.textContent = 'Checking server storage...';
 
         try {
-            const checkResponse = await fetch(`/api/storage/check?fileSize=${selectedFile.size}`, { credentials: 'include' }); // <-- CHANGE ADDED
+            const checkResponse = await fetch(`/api/storage/check?fileSize=${selectedFile.size}`, { credentials: 'include' });
             const checkData = await checkResponse.json();
 
             if (!checkData.hasEnoughSpace) {
@@ -155,11 +148,9 @@ document.addEventListener('DOMContentLoaded', () => {
         statusMessage.textContent = 'Starting secure upload...';
 
         try {
-            // Step 5: Fetch the server's public RSA key.
             statusMessage.textContent = 'Fetching server public key...';
-            const response = await fetch('/api/security/public-key', { credentials: 'include' }); // <-- CHANGE ADDED
+            const response = await fetch('/api/security/public-key', { credentials: 'include' });
 
-            // ... (rest of your crypto logic is fine) ...
             const keyData = await response.json();
             const fileBuffer = await file.arrayBuffer();
             const hashBuffer = await window.crypto.subtle.digest('SHA-256', fileBuffer);
@@ -171,7 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const exportedAesKey = await window.crypto.subtle.exportKey('raw', aesKey);
             const encryptedAesKeyBuffer = await window.crypto.subtle.encrypt({ name: 'RSA-OAEP' }, rsaPublicKey, exportedAesKey);
 
-            // Step 7: Prepare and send all parts to the server.
             statusMessage.textContent = 'Uploading encrypted data...';
             const formData = new FormData();
             formData.append('file', new Blob([iv, new Uint8Array(encryptedFileBuffer)]), file.name);
@@ -181,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const uploadResponse = await fetch('/api/files/upload', {
                 method: 'POST',
                 body: formData,
-                credentials: 'include' // <-- CHANGE ADDED
+                credentials: 'include'
             });
 
             if (uploadResponse.redirected && uploadResponse.url.includes('/login')) {
@@ -202,7 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Helper Functions (no changes needed here) ---
     function bufferToHex(buffer) { return [...new Uint8Array(buffer)].map(b => b.toString(16).padStart(2, '0')).join(''); }
     function base64ToArrayBuffer(base64) {
         const binaryString = window.atob(base64);
