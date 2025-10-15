@@ -1,151 +1,170 @@
+/* ---------- VARIABLES ---------- */
 :root {
-    --bg-color: #121212;
-    --surface-color: #1e1e1e;
-    --primary-color: #007bff;
-    --primary-hover: #0056b3;
-    --text-color: #e0e0e0;
-    --text-muted: #888;
-    --border-color: #333;
-    --success-color: #28a745;
-    --error-color: #dc3545;
+    --bg-color: #101026;
+    --card-bg: rgba(20, 10, 30, 0.8);
+    --neon-blue: #33ffff;
+    --neon-purple: #cc33ff;
+    --text-color: #e0e0ff;
+    --error-color: #ff3860;
 }
 
+/* ---------- GENERAL BODY & LAYOUT ---------- */
 body {
-    font-family: 'Inter', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    overflow: hidden;
-}
-
-section {
-    display: none;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-}
-
-section.active {
-    display: flex;
-}
-
-.container {
-    text-align: center;
-    background: var(--surface-color);
-    padding: 50px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    border: 1px solid var(--border-color);
-    max-width: 500px;
-}
-
-h1, h2 {
-    color: #fff;
-}
-
-h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-}
-
-.subtitle {
-    color: var(--text-muted);
-    margin-bottom: 30px;
-    line-height: 1.6;
-}
-
-button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 15px 30px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-button:hover {
-    background-color: var(--primary-hover);
-    transform: translateY(-2px);
-}
-
-.hidden {
-    display: none;
-}
-
-.auth-container form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.auth-container input {
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
+    font-family: "Poppins", sans-serif;
     background: var(--bg-color);
     color: var(--text-color);
-    font-size: 16px;
-}
-
-.auth-container a {
-    color: var(--primary-color);
-    text-decoration: none;
-}
-
-/* App Section */
-.app-header {
+    margin: 0;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    width: 100%;
-    margin-bottom: 20px;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
 }
 
-#logout-btn {
-    background: var(--error-color);
-    padding: 10px 20px;
+/* This is the main change. The general 'section' rule has been removed.
+   Visibility is now controlled ONLY by the '.hidden' class.
+*/
+
+.hidden {
+    display: none !important;
 }
 
-#drop-area {
-    border: 2px dashed var(--border-color);
-    border-radius: 12px;
+.container, .auth-container, .app-container {
+    text-align: center;
+    background: var(--card-bg);
     padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(51, 255, 255, 0.3), 0 0 30px rgba(204, 51, 255, 0.3);
+    width: 90%;
+    max-width: 400px;
+    z-index: 10;
+    animation: fadeInScale 1s ease-out;
+    position: relative;
+}
+
+/* ---------- TYPOGRAPHY & TEXT ---------- */
+h1, h2 {
     margin-bottom: 20px;
-    transition: all 0.3s ease;
+    color: var(--neon-purple);
+    text-shadow: 0 0 5px rgba(204, 51, 255, 0.3), 0 0 15px rgba(51, 255, 255, 0.3);
+    animation: slideDown 1s ease-out;
 }
 
-#drop-area.highlight {
-    border-color: var(--primary-color);
-    background-color: rgba(0, 123, 255, 0.1);
-}
-
-.file-size-limit {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    margin-top: -10px; /* Adjust spacing */
-    margin-bottom: 20px;
-}
-
-.file-label {
-    color: var(--primary-color);
+.toggle-link a {
+    color: var(--neon-blue);
+    text-decoration: none;
     cursor: pointer;
-    text-decoration: underline;
 }
 
-#file-info {
-    margin-bottom: 20px;
+/* ---------- BUTTONS ---------- */
+.primary-btn, .secondary-btn {
+    background: var(--neon-blue);
+    color: #101026;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+    box-shadow: 0 0 8px rgba(51, 255, 255, 0.3), 0 0 15px rgba(204, 51, 255, 0.3);
+    margin-top: 10px;
 }
 
-#statusMessage {
-    margin-top: 20px;
-    font-weight: 500;
+.secondary-btn {
+    background: transparent;
+    color: var(--neon-purple);
+    border: 1px solid var(--neon-purple);
+    margin-left: 10px;
+    box-shadow: 0 0 8px rgba(204, 51, 255, 0.3);
+}
+
+.primary-btn:hover, .secondary-btn:hover {
+    transform: scale(1.06);
+}
+
+/* ---------- FORMS & INPUTS ---------- */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input {
+    width: calc(100% - 20px);
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-color);
+    transition: 0.3s;
+}
+
+input:focus {
+    outline: 2px solid var(--neon-blue);
+    transform: scale(1.01);
+}
+
+/* ---------- DRAG & DROP AREA ---------- */
+#dropArea {
+    border: 2px dashed var(--neon-blue);
+    border-radius: 10px;
+    padding: 30px;
+    margin: 20px 0;
+    cursor: pointer;
+    transition: background 0.3s, border-color 0.3s, transform 0.3s;
+}
+
+#dropArea.dragover {
+    background: rgba(51, 255, 255, 0.05);
+    border-color: var(--neon-purple);
+    transform: scale(1.03);
+}
+
+/* ---------- BACKGROUND ANIMATIONS ---------- */
+.flying-file, .abstract-shape {
+    position: absolute;
+    z-index: 0;
+}
+
+.flying-file {
+    width: 25px;
+    height: 18px;
+    background: linear-gradient(135deg, rgba(102, 255, 255, 0.4), rgba(153, 102, 255, 0.4));
+    border-radius: 6px;
+    box-shadow: 0 0 8px rgba(102, 255, 255, 0.3), 0 0 12px rgba(153, 102, 255, 0.3);
+    opacity: 0.6;
+    animation: file-move 12s linear infinite;
+}
+
+.abstract-shape {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(200, 200, 255, 0.15));
+    border-radius: 50% 30% 50% 30%;
+    filter: blur(10px);
+    animation: float-shape 20s linear infinite;
+    opacity: 0.5;
+    width: 80px;
+    height: 80px;
+}
+
+/* Keyframe Animations */
+@keyframes fadeInScale {
+    0% { opacity: 0; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideDown {
+    0% { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes file-move {
+    0%   { transform: translateX(-5vw) translateY(0) rotate(0deg); opacity: 0.6; }
+    100% { transform: translateX(105vw) translateY(20px) rotate(30deg); opacity: 0; }
+}
+
+@keyframes float-shape {
+    0%   { transform: translateY(0px) rotate(0deg); }
+    50%  { transform: translateY(-20px) rotate(90deg); }
+    100% { transform: translateY(0px) rotate(180deg); }
 }
