@@ -3,7 +3,7 @@ package com.javaexpert.secure_file_transfer.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users") // This will create a table named "users"
+@Table(name = "users")
 public class User {
 
     @Id
@@ -16,7 +16,6 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    // Add required getters and setters...
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getUsername() { return username; }
