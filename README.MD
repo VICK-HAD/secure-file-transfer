@@ -47,3 +47,27 @@ This project is a secure file transfer system built with Java and Spring Boot. I
     * `file`: The encrypted file to be uploaded.
     * `hash`: The SHA-256 hash of the original, unencrypted file.
     * `key`: The AES session key, encrypted with the server's public RSA key.
+
+
+## Guide to start the application
+
+### **Create MySQL database**
+
+```commandline
+    CREATE DATABASE pojectdb;
+```
+
+### **Paste this in Terminal to Start the SpringBoot**
+
+```commandline
+    cd secure-file-transfer
+    mvn spring-boot:run
+```
+
+### **Paste this URL in your Browser**
+
+```commandline
+    localhost:8081
+```
+
+### Done! 
