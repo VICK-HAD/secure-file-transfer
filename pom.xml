@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.4</version> <relativePath/> </parent>
+        <version>3.5.6</version> <relativePath/> </parent>
     <groupId>com.javaexpert</groupId>
     <artifactId>secure-file-transfer</artifactId>
     <version>0.0.1-SNAPSHOT</version>
