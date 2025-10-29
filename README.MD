@@ -67,7 +67,11 @@ This project is a secure file transfer system built with Java and Spring Boot. I
 ### **Paste this URL in your Browser**
 
 ```commandline
-    localhost:8081
+    localhost:8081 
+
+    or 
+
+    https://localhost:8081
 ```
 
 ### Done! 
