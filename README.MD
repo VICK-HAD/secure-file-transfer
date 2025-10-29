@@ -54,7 +54,7 @@ This project is a secure file transfer system built with Java and Spring Boot. I
 ### **Create MySQL database**
 
 ```commandline
-    CREATE DATABASE pojectdb;
+    CREATE DATABASE projectdb;
 ```
 
 ### **Paste this in Terminal to Start the SpringBoot**
